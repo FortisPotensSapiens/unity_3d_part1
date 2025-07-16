@@ -1,21 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerIteraction : MonoBehaviour
 {
     [SerializeField] GameObject ButtonE;
-    private void OnTriggerStay(Collider other)
+    [SerializeField] Animation OpenAnim;
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Chest")
         {
             ButtonE.SetActive(true);
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Chest")
+        {
             if (Input.GetKey(KeyCode.E))
             {
-                var anim = other.gameObject.GetComponent<Animator>();
-                var isOpen = anim.GetBool("isOpen");
-                anim.SetBool("isOpen", !isOpen);
-                ButtonE.SetActive(false);
+                StartCoroutine(Win(other));
             }
         }
     }
@@ -26,5 +32,15 @@ public class PlayerIteraction : MonoBehaviour
         {
             ButtonE.SetActive(false);
         }
+    }
+
+    IEnumerator Win(Collider other)
+    {
+        var anim = other.gameObject.GetComponent<Animator>();
+        var isOpen = anim.GetBool("isOpen");
+        anim.SetBool("isOpen", !isOpen);
+        ButtonE.SetActive(false);
+        yield return new WaitForSeconds(2);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
